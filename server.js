@@ -4,11 +4,12 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Message = require('./models/message');
 const socket = require('socket.io');
+const path = require('path');
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 // Assign the value of your mongoDB connection string to this constant
-const dbConnectString = "";
+const dbConnectString = "mongodb+srv://phuong:S2duyphuong!@cluster0-qjs38.mongodb.net/test?retryWrites=true";
 
 // Updating mongoose's promise version
 mongoose.Promise = global.Promise;
@@ -50,6 +51,16 @@ app.post('/api/message', (req, res) => {
         res.send(err).status(500);
     });
 });
+
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static("./client/build"));
+    app.get("*", (req, res) => {
+        res.sendFile(path,resolve(__dirname, "./client/build/index.html"));
+    });
+}
+
+
 
 // Start the server at the specified PORT
 let server = app.listen(PORT, () => {
